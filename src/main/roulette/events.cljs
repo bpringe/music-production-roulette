@@ -1,6 +1,19 @@
 (ns roulette.events
-  (:require [re-frame.core :as rf]
+  (:require [cljs.reader :as reader]
+            [re-frame.core :as rf]
             [roulette.db :as db]))
+
+(def ls-key "music-production-roulette")
+
+(defn- save-db! [db]
+  (.setItem js/localStorage ls-key (pr-str db)))
+
+(defn- load-db []
+  (when-let [stored (.getItem js/localStorage ls-key)]
+    (reader/read-string stored)))
+
+(def persist
+  (rf/after (fn [db _] (save-db! db))))
 
 (defn- roll-category
   "Given a category definition and its runtime state, return a random result string."
@@ -19,20 +32,23 @@
 (rf/reg-event-db
   :roulette/initialize
   (fn [_ _]
-    db/default-db))
+    (or (load-db) db/default-db)))
 
 (rf/reg-event-db
   :roulette/toggle-category
+  [persist]
   (fn [db [_ category-id]]
     (update-in db [:categories category-id :enabled?] not)))
 
 (rf/reg-event-db
   :roulette/set-tempo-mode
+  [persist]
   (fn [db [_ mode]]
     (assoc-in db [:categories :tempo :mode] mode)))
 
 (rf/reg-event-db
   :roulette/roll
+  [persist]
   (fn [db _]
     (let [enabled-ids (->> (:categories db)
                            (filter (fn [[_ v]] (:enabled? v)))
