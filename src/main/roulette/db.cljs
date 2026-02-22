@@ -26,7 +26,20 @@
 
    {:id     :time-sig
     :label  "Time Signature"
-    :values ["4/4" "3/4" "6/8" "5/4" "7/8" "2/4"]}])
+    :values ["4/4" "3/4" "6/8" "5/4" "7/8" "2/4"]}
+
+   {:id     :chord-prog
+    :label  "Chord Progression"
+    :values ["I - IV - V - I"
+             "ii - V - I"
+             "I - V - vi - IV"
+             "I - vi - IV - V"
+             "vi - IV - I - V"
+             "i - VI - III - VII"
+             "i - iv - v"
+             "I - IV - vi - V"
+             "I - iii - IV - V"
+             "ii - IV - V"]}])
 
 (def category-by-id
   "Lookup map: category-id -> category definition."
@@ -38,5 +51,6 @@
   {:categories {:tempo    {:enabled? true :mode :exact}
                 :key      {:enabled? true}
                 :scale    {:enabled? true}
-                :time-sig {:enabled? true}}
+                :time-sig    {:enabled? true}
+                :chord-prog {:enabled? true}}
    :results nil})
